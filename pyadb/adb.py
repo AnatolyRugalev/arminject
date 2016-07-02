@@ -26,6 +26,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 import subprocess
 import time
+import os
 
 class ADB:
     def __init__(self):
@@ -34,7 +35,7 @@ class ADB:
             raise "ADB binary not found in PATH."
 
     def push( self, src, dst ):
-        self._exec( "adb push '%s' '%s' 2>&1 /dev/null" % ( src, dst ) )
+        self._exec( "adb push '%s' '%s'" % ( src, dst ), True )
 
     def sh( self, cmd ):
         return self._exec( "adb shell '%s'" % cmd )
@@ -73,8 +74,9 @@ class ADB:
         for line in iter( proc.stdout.readline, '' ):
             print line.rstrip()
 
-    def _exec( self, args ):
-        p = subprocess.Popen( args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True )
+    def _exec( self, cmdline, silent = False ):
+        channel = open(os.devnull, 'wb') if silent is True else subprocess.PIPE
+        p = subprocess.Popen( cmdline, stdout=channel, stderr=channel, shell=True )
         out, err = p.communicate()
         if err:
             print err
