@@ -5,4 +5,4 @@ clean:
 	@rm -rf obj libs
 
 test: all
-	python test.py
+	python2.7 test.py
